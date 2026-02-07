@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Vigihdev\Symfony\ConfigBridge\DependencyInjection;
 
-use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionProperty;
 use RuntimeException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Vigihdev\Symfony\ConfigBridge\Exception\ConfigBridgeException;
 
-final class Injector
+final class PropertyInjector
 {
     private static ?ContainerInterface $container = null;
 
@@ -22,7 +22,7 @@ final class Injector
     public static function inject(object $instance): void
     {
         if (self::$container === null) {
-            throw new RuntimeException('Container belum di-set. Panggil DependencyInjector::setContainer() terlebih dahulu.');
+            throw new ConfigBridgeException('The container has not been set. Call Injector::setContainer() first.');
         }
 
         $reflection = new ReflectionClass($instance);
@@ -41,9 +41,12 @@ final class Injector
     private static function injectService(object $instance, ReflectionProperty $property, string $serviceName): void
     {
         if (!self::$container->has($serviceName)) {
-            throw new InvalidArgumentException(
-                "Service '{$serviceName}' tidak tersedia di Container. " .
-                    "Pastikan service sudah di-register di config/services.yaml."
+            throw new ConfigBridgeException(
+                sprintf(
+                    "Service '%s' is not available in the container. " .
+                        "Please ensure the service is registered in config/services.yaml.",
+                    $serviceName
+                )
             );
         }
 
@@ -56,8 +59,8 @@ final class Injector
             $property->setAccessible(true);
             $property->setValue($instance, $service);
         } catch (RuntimeException $e) {
-            throw new RuntimeException(
-                "Gagal inject service '{$serviceName}': " . $e->getMessage(),
+            throw new ConfigBridgeException(
+                "Failed to inject service '{$serviceName}': " . $e->getMessage(),
                 $e->getCode(),
                 $e
             );
@@ -73,9 +76,13 @@ final class Injector
         $propertyType = $property->getType()->getName();
 
         if (!($service instanceof $propertyType)) {
-            throw new RuntimeException(
-                "Service '{$serviceName}' (" . get_class($service) . ") " .
-                    "tidak compatible dengan property type '{$propertyType}'"
+            throw new ConfigBridgeException(
+                sprintf(
+                    "Service '%s' (%s) is not compatible with property type '%s'.",
+                    $serviceName,
+                    get_class($service),
+                    $propertyType
+                )
             );
         }
     }

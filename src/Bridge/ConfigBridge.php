@@ -12,7 +12,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\DependencyInjection\{ContainerBuilder, Definition};
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Vigihdev\Symfony\ConfigBridge\Contract\ConfigBridgeInterface;
-use Vigihdev\Symfony\ConfigBridge\DependencyInjection\{Injector, ServiceLocator};
+use Vigihdev\Symfony\ConfigBridge\DependencyInjection\{PropertyInjector, ServiceLocator};
 use Vigihdev\Symfony\ConfigBridge\Exception\ConfigBridgeException;
 use Vigihdev\Symfony\ConfigBridge\Exception\Validation\ConfigBridgeValidationException;
 
@@ -60,7 +60,7 @@ final class ConfigBridge implements ConfigBridgeInterface
             // Enable dependency injection setelah container ready
             if ($enableAutoInjection) {
                 self::$injectionEnabled = true;
-                Injector::setContainer($bridge->container);
+                PropertyInjector::setContainer($bridge->container);
             }
 
             return $bridge;

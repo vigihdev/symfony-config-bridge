@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Vigihdev\Symfony\ConfigBridge\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Vigihdev\Symfony\ConfigBridge\Exception\ConfigBridgeException;
 
 final class ServiceLocator
 {
@@ -18,7 +19,7 @@ final class ServiceLocator
     public static function getContainer(): ContainerInterface
     {
         if (self::$container === null) {
-            throw new \RuntimeException('Container has not been set yet');
+            throw new ConfigBridgeException('Container has not been set yet');
         }
 
         return self::$container;
