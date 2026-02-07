@@ -126,6 +126,10 @@ final class ConfigBridge implements ConfigBridgeInterface
         return $this->container->has($id);
     }
 
+    /**
+     *
+     * @return ContainerBuilder
+     */
     public function container(): ContainerBuilder
     {
         return $this->container;
