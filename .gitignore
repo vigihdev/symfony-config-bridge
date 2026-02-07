@@ -1,0 +1,18 @@
+# Composer
+.vscode
+.marscode
+.DS_Store
+.phpunit.result.cache
+.phpunit.cache
+# phpunit.xml
+local-dev
+config
+.env
+vendor
+scripts
+storage
+composer.lock
+node_modules
+package-lock.json
+nodemon.json
+package.json
